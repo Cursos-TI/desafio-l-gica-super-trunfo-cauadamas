@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <string.h>
 
+// Função para limpar o buffer do teclado
+void limparBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
 int main() {
     // Declaração das variáveis para a primeira carta
     char estado1[3], codigo1[4], nomeCidade1[50];
@@ -15,15 +21,22 @@ int main() {
     // Entrada de dados para a primeira carta
     printf("Insira os dados da primeira carta:\n");
     printf("Estado (ex: SP): ");
-    scanf("%s", estado1);
+    scanf("%2s", estado1);
+    limparBuffer();
     printf("Código da Carta (ex: A01): ");
-    scanf("%s", codigo1);
+    scanf("%3s", codigo1);
+    limparBuffer();
     printf("Nome da Cidade: ");
-    scanf(" %[^\n]", nomeCidade1);
+    fgets(nomeCidade1, sizeof(nomeCidade1), stdin);
+    nomeCidade1[strcspn(nomeCidade1, "\n")] = '\0'; // Remove o '\n'
     printf("População: ");
     scanf("%d", &populacao1);
     printf("Área (em km²): ");
     scanf("%f", &area1);
+    if (area1 <= 0) {
+        printf("Erro: A área deve ser maior que zero.\n");
+        return 1;
+    }
     printf("PIB (em bilhões): ");
     scanf("%f", &pib1);
     printf("Número de Pontos Turísticos: ");
@@ -31,20 +44,27 @@ int main() {
 
     // Cálculo da densidade populacional e PIB per capita
     densidadePopulacional1 = populacao1 / area1;
-    pibPerCapita1 = pib1 * 1000 / populacao1;
+    pibPerCapita1 = (pib1 * 1000) / populacao1;
 
     // Entrada de dados para a segunda carta
     printf("\nInsira os dados da segunda carta:\n");
     printf("Estado (ex: RJ): ");
-    scanf("%s", estado2);
+    scanf("%2s", estado2);
+    limparBuffer();
     printf("Código da Carta (ex: B02): ");
-    scanf("%s", codigo2);
+    scanf("%3s", codigo2);
+    limparBuffer();
     printf("Nome da Cidade: ");
-    scanf(" %[^\n]", nomeCidade2);
+    fgets(nomeCidade2, sizeof(nomeCidade2), stdin);
+    nomeCidade2[strcspn(nomeCidade2, "\n")] = '\0'; // Remove o '\n'
     printf("População: ");
     scanf("%d", &populacao2);
     printf("Área (em km²): ");
     scanf("%f", &area2);
+    if (area2 <= 0) {
+        printf("Erro: A área deve ser maior que zero.\n");
+        return 1;
+    }
     printf("PIB (em bilhões): ");
     scanf("%f", &pib2);
     printf("Número de Pontos Turísticos: ");
@@ -52,7 +72,7 @@ int main() {
 
     // Cálculo da densidade populacional e PIB per capita
     densidadePopulacional2 = populacao2 / area2;
-    pibPerCapita2 = pib2 * 1000 / populacao2;
+    pibPerCapita2 = (pib2 * 1000) / populacao2;
 
     // Comparação usando um atributo fixo (exemplo: PIB per capita)
     printf("\nComparação de cartas (Atributo: PIB per capita):\n");
