@@ -7,13 +7,25 @@ void limparBuffer() {
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
+// Função para exibir o menu de atributos
+int escolherAtributo(const char* msg) {
+    int opcao;
+    printf("%s\n", msg);
+    printf("1 - População\n");
+    printf("2 - Área\n");
+    printf("3 - PIB\n");
+    printf("4 - Pontos Turísticos\n");
+    printf("5 - Densidade Demográfica\n");
+    printf("Escolha um atributo (1-5): ");
+    scanf("%d", &opcao);
+    return (opcao >= 1 && opcao <= 5) ? opcao : -1; // Valida a entrada
+}
+
 int main() {
-    // Declaração das variáveis para a primeira carta
     char estado1[3], codigo1[4], nomeCidade1[50];
     int populacao1, pontosTuristicos1;
     float area1, pib1, densidadePopulacional1, pibPerCapita1;
 
-    // Declaração das variáveis para a segunda carta
     char estado2[3], codigo2[4], nomeCidade2[50];
     int populacao2, pontosTuristicos2;
     float area2, pib2, densidadePopulacional2, pibPerCapita2;
@@ -28,7 +40,7 @@ int main() {
     limparBuffer();
     printf("Nome da Cidade: ");
     fgets(nomeCidade1, sizeof(nomeCidade1), stdin);
-    nomeCidade1[strcspn(nomeCidade1, "\n")] = '\0'; // Remove o '\n'
+    nomeCidade1[strcspn(nomeCidade1, "\n")] = '\0';
     printf("População: ");
     scanf("%d", &populacao1);
     printf("Área (em km²): ");
@@ -42,7 +54,6 @@ int main() {
     printf("Número de Pontos Turísticos: ");
     scanf("%d", &pontosTuristicos1);
 
-    // Cálculo da densidade populacional e PIB per capita
     densidadePopulacional1 = populacao1 / area1;
     pibPerCapita1 = (pib1 * 1000) / populacao1;
 
@@ -56,7 +67,7 @@ int main() {
     limparBuffer();
     printf("Nome da Cidade: ");
     fgets(nomeCidade2, sizeof(nomeCidade2), stdin);
-    nomeCidade2[strcspn(nomeCidade2, "\n")] = '\0'; // Remove o '\n'
+    nomeCidade2[strcspn(nomeCidade2, "\n")] = '\0';
     printf("População: ");
     scanf("%d", &populacao2);
     printf("Área (em km²): ");
@@ -70,23 +81,50 @@ int main() {
     printf("Número de Pontos Turísticos: ");
     scanf("%d", &pontosTuristicos2);
 
-    // Cálculo da densidade populacional e PIB per capita
     densidadePopulacional2 = populacao2 / area2;
     pibPerCapita2 = (pib2 * 1000) / populacao2;
 
-    // Comparação usando um atributo fixo (exemplo: PIB per capita)
-    printf("\nComparação de cartas (Atributo: PIB per capita):\n");
-    printf("Carta 1 - %s (%s): %.2f reais\n", nomeCidade1, estado1, pibPerCapita1);
-    printf("Carta 2 - %s (%s): %.2f reais\n", nomeCidade2, estado2, pibPerCapita2);
+    // Escolha de dois atributos
+    int atributo1, atributo2;
+    do {
+        atributo1 = escolherAtributo("Escolha o primeiro atributo para comparar:");
+    } while (atributo1 == -1);
 
-    // Determinação do vencedor
-    if (pibPerCapita1 > pibPerCapita2) {
-        printf("Resultado: Carta 1 (%s) venceu!\n", nomeCidade1);
-    } else if (pibPerCapita2 > pibPerCapita1) {
-        printf("Resultado: Carta 2 (%s) venceu!\n", nomeCidade2);
-    } else {
-        printf("Resultado: Empate!\n");
+    do {
+        atributo2 = escolherAtributo("Escolha o segundo atributo para comparar:");
+    } while (atributo2 == -1 || atributo2 == atributo1);
+
+    float valor1C1, valor1C2, valor2C1, valor2C2;
+    
+    // Obtenção dos valores para comparação
+    switch (atributo1) {
+        case 1: valor1C1 = populacao1; valor1C2 = populacao2; break;
+        case 2: valor1C1 = area1; valor1C2 = area2; break;
+        case 3: valor1C1 = pibPerCapita1; valor1C2 = pibPerCapita2; break;
+        case 4: valor1C1 = pontosTuristicos1; valor1C2 = pontosTuristicos2; break;
+        case 5: valor1C1 = densidadePopulacional1; valor1C2 = densidadePopulacional2; break;
     }
+    
+    switch (atributo2) {
+        case 1: valor2C1 = populacao1; valor2C2 = populacao2; break;
+        case 2: valor2C1 = area1; valor2C2 = area2; break;
+        case 3: valor2C1 = pibPerCapita1; valor2C2 = pibPerCapita2; break;
+        case 4: valor2C1 = pontosTuristicos1; valor2C2 = pontosTuristicos2; break;
+        case 5: valor2C1 = densidadePopulacional1; valor2C2 = densidadePopulacional2; break;
+    }
+
+    // Comparação e soma dos atributos
+    int pontosC1 = ((atributo1 != 5 && valor1C1 > valor1C2) || (atributo1 == 5 && valor1C1 < valor1C2)) ? 1 : 0;
+    pontosC1 += ((atributo2 != 5 && valor2C1 > valor2C2) || (atributo2 == 5 && valor2C1 < valor2C2)) ? 1 : 0;
+
+    int pontosC2 = ((atributo1 != 5 && valor1C2 > valor1C1) || (atributo1 == 5 && valor1C2 < valor1C1)) ? 1 : 0;
+    pontosC2 += ((atributo2 != 5 && valor2C2 > valor2C1) || (atributo2 == 5 && valor2C2 < valor2C1)) ? 1 : 0;
+
+    // Exibição do resultado
+    printf("\nResultado da rodada:\n");
+    printf("Carta 1 (%s - %s) obteve %d pontos\n", nomeCidade1, estado1, pontosC1);
+    printf("Carta 2 (%s - %s) obteve %d pontos\n", nomeCidade2, estado2, pontosC2);
+    printf("%s venceu!\n", (pontosC1 > pontosC2) ? nomeCidade1 : (pontosC2 > pontosC1) ? nomeCidade2 : "Empate!");
 
     return 0;
 }
